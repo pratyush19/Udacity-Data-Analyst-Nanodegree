@@ -212,3 +212,15 @@ So, I think there are several opportunities for cleaning and validation of the d
 * The tourists or even the city people search map to see the basic amenities provided in the city or what are the popular places and attractions in the city or near outside the city. So, the users must be motivated to also provide these informations in the map.
 * If we can provide these informations then there are more chances to increase views on the map because many people directly enter the famous name on the map.
 
+# Files
+* `Quiz/` : scripts completed in lesson Case Study OpenStreetMap
+* `README.md` : this file
+* `ahmedabad_sample.osm`: sample data of the OSM file
+* `audit.py` : audit street, city and update their names
+* `data.py` : build CSV files from OSM and also parse, clean and shape data
+* `database.py` : create database of the CSV files
+* `mapparser.py` : find unique tags in the data
+* `query.py` : different queries about the database using SQL
+* `report.pdf` : pdf of this document
+* `sample.py` : extract sample data from the OSM file
+* `tags.py` : count multiple patterns in the tags
