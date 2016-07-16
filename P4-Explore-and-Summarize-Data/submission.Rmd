@@ -4,13 +4,6 @@ Wine Quality by Pratyush Kumar
 In this project, we will explore a data set on red wines quality. Our main objective is to explore the chemical properties influences the quality of red wines. This tidy data set contains 1,599 red wines with 11 variables on the chemical properties of the wine. The data set is available [here](https://www.google.com/url?q=https://s3.amazonaws.com/udacity-hosted-downloads/ud651/wineQualityReds.csv&sa=D&ust=1468567697749000&usg=AFQjCNE7WYwhUvgZV9QX1BC9Hban9oAmRw) and information about the data set is available [here](https://www.google.com/url?q=https://s3.amazonaws.com/udacity-hosted-downloads/ud651/wineQualityInfo.txt&sa=D&ust=1468567697751000&usg=AFQjCNHYOEVrLI2HIxVJ9eXxCflrzbHD2A).
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, packages}
-# Load all of the packages that you end up using
-# in your analysis in this code chunk.
-
-# Notice that the parameter "echo" was set to FALSE for this code chunk.
-# This prevents the code from displaying in the knitted HTML output.
-# You should set echo=FALSE for all code chunks in your file.
-
 library(ggplot2)
 library(dplyr)
 library(gridExtra)
