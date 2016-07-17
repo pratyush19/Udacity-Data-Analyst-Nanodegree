@@ -3,20 +3,24 @@ Wine Quality by Pratyush Kumar
 # Description
 In this project, we will explore a data set on red wines quality. Our main objective is to explore the chemical properties influences the quality of red wines. This tidy data set contains 1,599 red wines with 11 variables on the chemical properties of the wine. The data set is available [here](https://www.google.com/url?q=https://s3.amazonaws.com/udacity-hosted-downloads/ud651/wineQualityReds.csv&sa=D&ust=1468567697749000&usg=AFQjCNE7WYwhUvgZV9QX1BC9Hban9oAmRw) and information about the data set is available [here](https://www.google.com/url?q=https://s3.amazonaws.com/udacity-hosted-downloads/ud651/wineQualityInfo.txt&sa=D&ust=1468567697751000&usg=AFQjCNHYOEVrLI2HIxVJ9eXxCflrzbHD2A).
 
-```{r echo=FALSE, message=FALSE, warning=FALSE, packages}
+```{r echo=FALSE}
+knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE)
+```
+
+
+```{r }
 library(ggplot2)
 library(dplyr)
 library(gridExtra)
 ```
 
-```{r echo=FALSE, Load_the_Data}
-# Load the Data
+```{r, Load_the_Data}
 rw <- read.csv('wineQualityReds.csv')
 ```
 
 # Statistical Summary 
 ### Structure of the dataset
-```{r echo=FALSE, structure}
+```{r , structure}
 str(rw)
 ```
 
@@ -25,28 +29,28 @@ str(rw)
 * All the variables in the dataset have numeric values except ```X``` and ```quality``` which are integer.
 
 ### Statistical summary of the variables in the dataset
-```{r echo=FALSE, summary}
+```{r, summary}
 summary(rw)
 ```
 As we are primarily interested in quality of the red wines, let's see some basic statistics about it
-```{r echo=FALSE}
+```{r }
 summary(rw$quality)
 ```
 * We've found that the quality lies in the range of [3, 8] with mean is equal to 5.636.
 
 # Univariate Plots Section
-```{r echo=FALSE, Univariate_Plots, message=FALSE}
-p1 <- qplot(data = rw, fixed.acidity)
-p2 <- qplot(data = rw, volatile.acidity)
-p3 <- qplot(data = rw, citric.acid)
-p4 <- qplot(data = rw, residual.sugar)
-p5 <- qplot(data = rw, chlorides)
-p6 <- qplot(data = rw, free.sulfur.dioxide)
-p7 <- qplot(data = rw, total.sulfur.dioxide)
-p8 <- qplot(data = rw, density)
+```{r, Univariate_Plots}
+p1 <- qplot(data = rw, fixed.acidity, xlab = 'fixed.acidity (g / dm^3)')
+p2 <- qplot(data = rw, volatile.acidity, xlab = 'volatile.acidity (g / dm^3)')
+p3 <- qplot(data = rw, citric.acid, xlab = 'citric.acid (g / dm^3)')
+p4 <- qplot(data = rw, residual.sugar, xlab = 'residual.sugar (g / dm^3)')
+p5 <- qplot(data = rw, chlorides, xlab = 'chlorides (g / dm^3)')
+p6 <- qplot(data = rw, free.sulfur.dioxide, xlab = 'free.sulfur.dioxide (mg / dm^3)')
+p7 <- qplot(data = rw, total.sulfur.dioxide, xlab = 'total.sulfur.dioxide (mg / dm^3)')
+p8 <- qplot(data = rw, density, xlab = 'density (g / dm^3)')
 p9 <- qplot(data = rw, pH)
-p10 <- qplot(data = rw, sulphates)
-p11 <- qplot(data = rw, alcohol)
+p10 <- qplot(data = rw, sulphates, xlab = 'sulpahtes (g / dm^3)')
+p11 <- qplot(data = rw, alcohol, xlab = 'alcohol (% volume)')
 p12 <- qplot(data = rw, quality)
 
 grid.arrange(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, ncol = 4)
@@ -61,7 +65,7 @@ As we can see the entire wine quality are in the range of 3 to 8 with the most c
 * 5 - 6 : good
 * 7 - 10 : ideal
 
-```{r echo=FALSE}
+```{r }
 rw$rating <- ifelse(rw$quality < 5, 'poor', ifelse(
   rw$quality < 7, 'good', 'ideal'))
 
@@ -75,7 +79,7 @@ ggplot(data = rw, aes(x = rating)) +
 ### Calculate total acidity
 To calculate sum of all acids in the red wines, we create new variable ```total.acidity```. 
 
-```{r echo=FALSE, message=FALSE}
+```{r }
 rw$total.acidity <- rw$fixed.acidity + rw$volatile.acidity + rw$citric.acid
 
 head(rw$total.acidity)
@@ -91,37 +95,43 @@ head(rw$total.acidity)
 
 ### Plot base 10 logarithmic scale of the long tailed distribution
 
-```{r echo=FALSE, message=FALSE}
+```{r }
 ggplot(data = rw, aes(x = fixed.acidity)) +
   geom_histogram() + 
-  scale_x_log10()
+  scale_x_log10() +
+  xlab('fixed.acidity (g / dm^3)')
 
 ggplot(data = rw, aes(x = volatile.acidity)) +
   geom_histogram() + 
-  scale_x_log10()
+  scale_x_log10() +
+  xlab('volatile.acidity (g / dm^3)')
 
 ggplot(data = rw, aes(x = free.sulfur.dioxide)) +
   geom_histogram() + 
-  scale_x_log10()
+  scale_x_log10() +
+  xlab('free.sulfur.dioxide (mg / dm^3)')
 
 ggplot(data = rw, aes(x = total.sulfur.dioxide)) +
   geom_histogram() + 
-  scale_x_log10()
+  scale_x_log10() +
+  xlab('total.sulfur.dioxide (mg / dm^3)')
 
 ggplot(data = rw, aes(x = sulphates)) +
   geom_histogram() + 
-  scale_x_log10()
+  scale_x_log10() +
+  xlab('sulphates (g / dm^3)')
 
 ggplot(data = rw, aes(x = alcohol)) +
   geom_histogram() + 
-  scale_x_log10()
+  scale_x_log10() +
+  xlab('alcohol (% volume')
 ```
 
 Taking log_10, we can see that ```fixed.acidity```, ```volatile.acidity```, and ```sulphates``` are normally distributed, with some few outliers. 
 
 ### Find number of zeroes in ```citric.acid```
 
-```{r echo=FALSE, message=FALSE}
+```{r }
 length(subset(rw, citric.acid == 0)$citric.acid)
 ```
 
@@ -129,14 +139,16 @@ We found that 132 observations have zero values.
 
 ### Find some patterns in ```residual.sugar``` and ```chlorides``` after removing some extreme outliers
 
-```{r echo=FALSE, message=FALSE, warning=FALSE}
+```{r }
 ggplot(data = rw, aes(x = residual.sugar)) +
   geom_histogram() +
-  scale_x_continuous(lim = c(0.5, quantile(rw$residual.sugar, 0.95)))
+  scale_x_continuous(lim = c(0.5, quantile(rw$residual.sugar, 0.95))) +
+  xlab('residual.sugar (g / dm^3)')
 
 ggplot(data = rw, aes(x = chlorides)) +
   geom_histogram() +
-  scale_x_continuous(lim = c(0.04, quantile(rw$chlorides, 0.95)))
+  scale_x_continuous(lim = c(0.04, quantile(rw$chlorides, 0.95))) +
+  xlab('chlorides (g / dm^3)')
 ```
 
 * After removing some extreme outliers, we see ```chlorides``` are now normally distributed
@@ -145,7 +157,7 @@ ggplot(data = rw, aes(x = chlorides)) +
 # Some Questions
 ### What is the structure of your dataset?
 
-```{r echo=FALSE, message=FALSE}
+```{r }
 str(rw)
 ```
 
@@ -166,7 +178,7 @@ As our main objective is to conclude ```quality```. So, it's the main feature.
 * ```citric.acid``` have very large number of zero values but after reading documentation it's fine as it found in small quantities.
 
 # Bivariate Plots Section
-```{r echo=FALSE, message=FALSE, warning=FALSE, Bivariate_Plots}
+```{r , Bivariate_Plots}
 bivariate_plot <- function(y, ylab) {
   return (qplot(data = rw, x = '', y = y, 
                 geom = 'boxplot', 
@@ -174,17 +186,17 @@ bivariate_plot <- function(y, ylab) {
                 ylab = ylab))
 }
 
-grid.arrange(bivariate_plot(rw$fixed.acidity, 'fixed.acidity'),
-             bivariate_plot(rw$volatile.acidity, 'volatile.acidity'),
-             bivariate_plot(rw$citric.acid, 'citric.acid'),
-             bivariate_plot(rw$residual.sugar, 'residual.sugar'),
-             bivariate_plot(rw$chlorides, 'chlorides'),
-             bivariate_plot(rw$free.sulfur.dioxide, 'free.sulfur.dioxide'),
-             bivariate_plot(rw$total.sulfur.dioxide, 'total.sulfur.dioxide'),
-             bivariate_plot(rw$density, 'density'),
+grid.arrange(bivariate_plot(rw$fixed.acidity, 'fixed.acidity (g / dm^3)'),
+             bivariate_plot(rw$volatile.acidity, 'volatile.acidity (g / dm^3)'),
+             bivariate_plot(rw$citric.acid, 'citric.acid (g / dm^3)'),
+             bivariate_plot(rw$residual.sugar, 'residual.sugar (g / dm^3)'),
+             bivariate_plot(rw$chlorides, 'chlorides (g / dm^3)'),
+             bivariate_plot(rw$free.sulfur.dioxide, 'free.sulfur.dioxide (mg / dm^3)'),
+             bivariate_plot(rw$total.sulfur.dioxide, 'total.sulfur.dioxide (mg / dm^3)'),
+             bivariate_plot(rw$density, 'density (g / cm^3)'),
              bivariate_plot(rw$pH, 'pH'),
-             bivariate_plot(rw$sulphates, 'sulphates'),
-             bivariate_plot(rw$alcohol, 'alcohol'),
+             bivariate_plot(rw$sulphates, 'sulphates (g / dm^3)'),
+             bivariate_plot(rw$alcohol, 'alcohol (% volume)'),
              ncol = 4)
 ```
 
@@ -192,7 +204,7 @@ grid.arrange(bivariate_plot(rw$fixed.acidity, 'fixed.acidity'),
 
 ### Boxplot of ```quality```
 
-```{r echo=FALSE, message=FALSE, warning=FALSE}
+```{r }
 quality_plot <- function(x, y, ylab) {
   return (ggplot(data = rw, aes(x, y)) +
            geom_boxplot(fill = 'green') +
@@ -200,23 +212,27 @@ quality_plot <- function(x, y, ylab) {
             ylab(ylab))
 }
 
-grid.arrange(quality_plot(rw$quality, rw$fixed.acidity, 'fixed.acidity'),
-             quality_plot(rw$quality, rw$volatile.acidity, 'volatile.acidity'),
-             quality_plot(rw$quality, rw$citric.acid, 'citric.acid'),
-             quality_plot(rw$quality, rw$residual.sugar, 'residual.sugar'),
-             quality_plot(rw$quality, rw$chlorides, 'chlorides'),
-             quality_plot(rw$quality, rw$free.sulfur.dioxide, 'free.sulfur.dioxide'),
-             quality_plot(rw$quality, rw$total.sulfur.dioxide, 'total.sulfur.dioxide'),
-             quality_plot(rw$quality, rw$density, 'density'),
+grid.arrange(quality_plot(rw$quality, rw$fixed.acidity, 'fixed.acidity (g / dm^3)'),
+             quality_plot(rw$quality, rw$volatile.acidity, 
+                          'volatile.acidity (g / dm^3)'),
+             quality_plot(rw$quality, rw$citric.acid, 'citric.acid (g / dm^3)'),
+             quality_plot(rw$quality, rw$residual.sugar, 'residual.sugar (g / dm^3)'),
+             quality_plot(rw$quality, rw$chlorides, 'chlorides (g / dm^3)'),
+             quality_plot(rw$quality, rw$free.sulfur.dioxide, 
+                          'free.sulfur.dioxide (mg / dm^3)'),
+             quality_plot(rw$quality, rw$total.sulfur.dioxide, 
+                          'total.sulfur.dioxide (mg / dm^3)'),
+             quality_plot(rw$quality, rw$density, 
+                          'density (g / cm^3)'),
              quality_plot(rw$quality, rw$pH, 'pH'),
-             quality_plot(rw$quality, rw$sulphates, 'sulphates'),
-             quality_plot(rw$quality, rw$alcohol, 'alcohol'),
+             quality_plot(rw$quality, rw$sulphates, 'sulphates (g / dm^3)'),
+             quality_plot(rw$quality, rw$alcohol, 'alcohol (% volume)'),
              ncol = 4)
 ```
 
 ### Boxplot of ```rating```
 
-```{r echo=FALSE, message=FALSE, warning=FALSE}
+```{r }
 rating_plot <- function(x, y, ylab) {
   return (ggplot(data = rw, aes(x, y)) +
            geom_boxplot(fill = 'orange') +
@@ -224,17 +240,20 @@ rating_plot <- function(x, y, ylab) {
             ylab(ylab))
 }
 
-grid.arrange(rating_plot(rw$rating, rw$fixed.acidity, 'fixed.acidity'),
-             rating_plot(rw$rating, rw$volatile.acidity, 'volatile.acidity'),
-             rating_plot(rw$rating, rw$citric.acid, 'citric.acid'),
-             rating_plot(rw$rating, rw$residual.sugar, 'residual.sugar'),
-             rating_plot(rw$rating, rw$chlorides, 'chlorides'),
-             rating_plot(rw$rating, rw$free.sulfur.dioxide, 'free.sulfur.dioxide'),
-             rating_plot(rw$rating, rw$total.sulfur.dioxide, 'total.sulfur.dioxide'),
-             rating_plot(rw$rating, rw$density, 'density'),
+grid.arrange(rating_plot(rw$rating, rw$fixed.acidity, 'fixed.acidity (g / dm^3)'),
+             rating_plot(rw$rating, rw$volatile.acidity, 
+                         'volatile.acidity (g / dm^3)'),
+             rating_plot(rw$rating, rw$citric.acid, 'citric.acid (g / dm^3)'),
+             rating_plot(rw$rating, rw$residual.sugar, 'residual.sugar (g / dm^3)'),
+             rating_plot(rw$rating, rw$chlorides, 'chlorides (g / dm^3)'),
+             rating_plot(rw$rating, rw$free.sulfur.dioxide, 
+                         'free.sulfur.dioxide (mg / dm^3)'),
+             rating_plot(rw$rating, rw$total.sulfur.dioxide, 
+                         'total.sulfur.dioxide (mg / dm^3)'),
+             rating_plot(rw$rating, rw$density, 'density (g / cm^3)'),
              rating_plot(rw$rating, rw$pH, 'pH'),
-             rating_plot(rw$rating, rw$sulphates, 'sulphates'),
-             rating_plot(rw$rating, rw$alcohol, 'alcohol'),
+             rating_plot(rw$rating, rw$sulphates, 'sulphates (g / dm^3)'),
+             rating_plot(rw$rating, rw$alcohol, 'alcohol (% volume)'),
              ncol = 4)
 ```
 
@@ -247,18 +266,18 @@ grid.arrange(rating_plot(rw$rating, rw$fixed.acidity, 'fixed.acidity'),
 **good** rating seems to have following trends:
 
 * low ```fixed.acidity``` and ```volatile.acidity```
-* higher ```sulfur.dioxide``` and ```sulphates```
+* higher ```sulfur.dioxide```
 * low ```pH``` and higher ```density```
 
 **ideal** rating seems to have following trends:
 
 * higher ```fixed.acidity``` , lower ```volatile.acidity``` and higher ```citric.acid```
-* low ```sulfur.dioxide``` and ```sulphates```
+* low ```sulfur.dioxide``` and higher ```sulphates```
 * lower ```pH``` and ```density```
 
 ### Correlation of variables against quality
 
-```{r echo=FALSE, message=FALSE}
+```{r }
 correlations <- c(cor.test(rw$fixed.acidity, rw$quality)$estimate,
                   cor.test(rw$volatile.acidity, rw$quality)$estimate,
                   cor.test(rw$citric.acid, rw$quality)$estimate,
@@ -288,16 +307,19 @@ correlations
 
 **Let's see some relationships between some variable and ```total.acidity```**
 
-```{r echo=FALSE, message=FALSE}
+```{r }
 ggplot(data = rw, aes(log10(total.acidity), density)) +
-  geom_point() +
+  geom_point(alpha = 1/10) +
   scale_x_continuous() +
-  geom_smooth()
+  geom_smooth() +
+  xlab('log10[total.acidity (g / dm^3)]') +
+  ylab('density (g / dm^3)')
 
 ggplot(data = rw, aes(log10(total.acidity), pH)) +
-  geom_point() +
+  geom_point(alpha = 1/10) +
   scale_x_continuous() +
-  geom_smooth()
+  geom_smooth() +
+  xlab('log10[total.acidity (g / dm^3)]')
 
 ```
 
@@ -306,22 +328,29 @@ We see that there is approx. linear relationship between density and log10(total
 
 # Multivariate Plots Section
 
-```{r echo=FALSE, message=FALSE, Multivariate_Plots}
+```{r , Multivariate_Plots}
 ggplot(data = rw, aes(pH, alcohol, color = quality)) +
   geom_point() +
-  facet_wrap(~rating)
+  facet_wrap(~rating) +
+  ylab('alcohol (% volume)')
   
 ggplot(data = rw, aes(alcohol, citric.acid, color = quality)) +
   geom_point() +
-  facet_wrap(~rating) 
+  facet_wrap(~rating) +
+  xlab('alcohol (% volume)') +
+  ylab('citric.acid (g / dm^3)')
 
 ggplot(data = rw, aes(alcohol, sulphates, color = quality)) +
   geom_point() +
-  facet_wrap(~rating) 
+  facet_wrap(~rating) +
+  xlab('alcohol (% volume)') +
+  ylab('sulphates (g / dm^3)') 
 
 ggplot(data = rw, aes(citric.acid, fixed.acidity, color = quality)) +
   geom_point() +
-  facet_wrap(~rating)
+  facet_wrap(~rating) +
+  xlab('citric.acid (g / dm^3)') +
+  ylab('fixed.acid (g / dm^3)')
 ```
 
 # Multivariate Analysis
@@ -332,7 +361,7 @@ I plot graph between four variables ```citric.acid```, ```fixed.acidity```, ```s
 # Final Plots and Summary
 
 ### Plot One : Effect of alcohol on wine quality
-```{r echo=FALSE, message=FALSE, Plot_One}
+```{r , Plot_One}
 ggplot(data = rw, aes(quality, alcohol, fill = rating)) +
   geom_boxplot() +
   ggtitle('Alcohol Levels on Wine Quality') +
@@ -342,10 +371,10 @@ ggplot(data = rw, aes(quality, alcohol, fill = rating)) +
 ```
 
 ### Description One
-Above plot clearly shows higher % of alcohol yields better wine.
+As alcohol is highly correlated with the quality, it is better to see its pattern with varying rating. From the above plot, it clearly shows higher % of alcohol yields better wine.
 
 ### Plot Two : Effect of acids on wine quality
-```{r echo=FALSE, message=FALSE, Plot_Two}
+```{r , Plot_Two}
 grid.arrange(ggplot(data = rw, aes(quality, fixed.acidity, fill = rating)) +
                geom_boxplot(),
              ggplot(data = rw, aes(quality, volatile.acidity, fill = rating)) +
@@ -356,22 +385,25 @@ grid.arrange(ggplot(data = rw, aes(quality, fixed.acidity, fill = rating)) +
 ```
 
 ### Description Two
-```fixed.acidity``` and ```citric.acid``` have highly correlated with quality but ```volatile.acidity``` has negative impact on quality.
+As more the acidic better is the wine. It would be better to see which acids have more impact on wine quality. Above plot shows, ```fixed.acidity``` and ```citric.acid``` have highly correlated with quality but ```volatile.acidity``` has negative impact on quality.
 
 ### Plot Three : Effect of pH on wine quality
-```{r echo=FALSE, message=FALSE, Plot_Three}
-ggplot(data = rw, aes(quality, pH, fill = rating)) +
-  geom_boxplot() +
-  ggtitle('pH Levels on Wine Quality')
+```{r , Plot_Three}
+ggplot(data = rw, aes(log10(total.acidity), pH)) +
+  geom_point(alpha = 1/10) +
+  scale_x_continuous() +
+  geom_smooth() +
+  xlab('total.acidity (g / dm^3)') +
+  ggtitle('pH Relation on Wine Quality')
   
 ```
 
 ### Description Three
-Lower the pH, better the wine. This also substantiate that higher the acidic tends to better the wine.
+From the above plot, it shows there is linear relationships between pH and total.acidity. This means lower the pH, more acidic the wines. This also substantiate that higher the acidic tends to better the wine.
 
 ### Plot Four : Ideal vs poor wine 
 
-```{r echo=FALSE, message=FALSE} 
+```{r } 
 ggplot(data = subset(rw, rating != 'good'), aes(alcohol, sulphates, color = rating)) +
   geom_point() +
   ggtitle('Alcohol vs Sulphates on Wine Quality') +
@@ -379,7 +411,12 @@ ggplot(data = subset(rw, rating != 'good'), aes(alcohol, sulphates, color = rati
   ylab('Alcohol (% volume)')
 ```
 
+### Description Four
+It would be great to see the real pattern between good and bad wines. Above plot differentiate between good and bad wines. It shows higher the % of alcohol and higher the sulphates give better wines. 
+
 ------
 
 # Reflection
 After this EDA, I can conclude that the major factors for better wine quality is alcohol, acidity and sulphates. These features must be in required content otherwise negative impact will effect the wine quality. Also, we can't be totally sure about quality index also it has been taken some experts. We've also concluded that there is linear relationship between pH and quality with negative slope.
+
+One thing that is still unclear is the amount of ```residual.sugar```. It contains many outliers, also after doing some operation we get its common range from 1 to 4. But we can't find its amount for ideal wine quality. I think more future research need to be done to find its ideal quantity.
