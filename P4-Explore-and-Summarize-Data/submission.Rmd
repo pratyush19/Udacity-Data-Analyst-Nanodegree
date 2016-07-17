@@ -178,29 +178,6 @@ As our main objective is to conclude ```quality```. So, it's the main feature.
 * ```citric.acid``` have very large number of zero values but after reading documentation it's fine as it found in small quantities.
 
 # Bivariate Plots Section
-```{r , Bivariate_Plots}
-bivariate_plot <- function(y, ylab) {
-  return (qplot(data = rw, x = '', y = y, 
-                geom = 'boxplot', 
-                xlab = '', 
-                ylab = ylab))
-}
-
-grid.arrange(bivariate_plot(rw$fixed.acidity, 'fixed.acidity (g / dm^3)'),
-             bivariate_plot(rw$volatile.acidity, 'volatile.acidity (g / dm^3)'),
-             bivariate_plot(rw$citric.acid, 'citric.acid (g / dm^3)'),
-             bivariate_plot(rw$residual.sugar, 'residual.sugar (g / dm^3)'),
-             bivariate_plot(rw$chlorides, 'chlorides (g / dm^3)'),
-             bivariate_plot(rw$free.sulfur.dioxide, 'free.sulfur.dioxide (mg / dm^3)'),
-             bivariate_plot(rw$total.sulfur.dioxide, 'total.sulfur.dioxide (mg / dm^3)'),
-             bivariate_plot(rw$density, 'density (g / cm^3)'),
-             bivariate_plot(rw$pH, 'pH'),
-             bivariate_plot(rw$sulphates, 'sulphates (g / dm^3)'),
-             bivariate_plot(rw$alcohol, 'alcohol (% volume)'),
-             ncol = 4)
-```
-
-# Bivariate Analysis
 
 ### Boxplot of ```quality```
 
@@ -209,7 +186,8 @@ quality_plot <- function(x, y, ylab) {
   return (ggplot(data = rw, aes(x, y)) +
            geom_boxplot(fill = 'green') +
             xlab('quality') +
-            ylab(ylab))
+            ylab(ylab) + 
+            facet_wrap(~quality))
 }
 
 grid.arrange(quality_plot(rw$quality, rw$fixed.acidity, 'fixed.acidity (g / dm^3)'),
@@ -256,6 +234,8 @@ grid.arrange(rating_plot(rw$rating, rw$fixed.acidity, 'fixed.acidity (g / dm^3)'
              rating_plot(rw$rating, rw$alcohol, 'alcohol (% volume)'),
              ncol = 4)
 ```
+
+# Bivariate Analysis
 
 **poor** rating seems to have following trends:
 
@@ -329,28 +309,36 @@ We see that there is approx. linear relationship between density and log10(total
 # Multivariate Plots Section
 
 ```{r , Multivariate_Plots}
-ggplot(data = rw, aes(pH, alcohol, color = quality)) +
+ggplot(data = rw, aes(pH, alcohol, color = as.factor(quality))) +
   geom_point() +
   facet_wrap(~rating) +
-  ylab('alcohol (% volume)')
+  ylab('alcohol (% volume)') +
+  theme_dark() +
+  scale_color_brewer(type = 'seq', palette = 1)
   
-ggplot(data = rw, aes(alcohol, citric.acid, color = quality)) +
+ggplot(data = rw, aes(alcohol, citric.acid, color = as.factor(quality))) +
   geom_point() +
   facet_wrap(~rating) +
   xlab('alcohol (% volume)') +
-  ylab('citric.acid (g / dm^3)')
+  ylab('citric.acid (g / dm^3)') +
+  scale_color_brewer(type = 'seq', palette = 2) +
+  theme_dark()
 
-ggplot(data = rw, aes(alcohol, sulphates, color = quality)) +
+ggplot(data = rw, aes(alcohol, sulphates, color = as.factor(quality))) +
   geom_point() +
   facet_wrap(~rating) +
   xlab('alcohol (% volume)') +
-  ylab('sulphates (g / dm^3)') 
+  ylab('sulphates (g / dm^3)') +
+  scale_color_brewer(type = 'seq', palette = 3) +
+  theme_dark()
 
-ggplot(data = rw, aes(citric.acid, fixed.acidity, color = quality)) +
+ggplot(data = rw, aes(citric.acid, fixed.acidity, color = as.factor(quality))) +
   geom_point() +
   facet_wrap(~rating) +
   xlab('citric.acid (g / dm^3)') +
-  ylab('fixed.acid (g / dm^3)')
+  ylab('fixed.acid (g / dm^3)')  +
+  scale_color_brewer(type = 'seq', palette = 4) +
+  theme_dark()
 ```
 
 # Multivariate Analysis
@@ -387,21 +375,7 @@ grid.arrange(ggplot(data = rw, aes(quality, fixed.acidity, fill = rating)) +
 ### Description Two
 As more the acidic better is the wine. It would be better to see which acids have more impact on wine quality. Above plot shows, ```fixed.acidity``` and ```citric.acid``` have highly correlated with quality but ```volatile.acidity``` has negative impact on quality.
 
-### Plot Three : Effect of pH on wine quality
-```{r , Plot_Three}
-ggplot(data = rw, aes(log10(total.acidity), pH)) +
-  geom_point(alpha = 1/10) +
-  scale_x_continuous() +
-  geom_smooth() +
-  xlab('total.acidity (g / dm^3)') +
-  ggtitle('pH Relation on Wine Quality')
-  
-```
-
-### Description Three
-From the above plot, it shows there is linear relationships between pH and total.acidity. This means lower the pH, more acidic the wines. This also substantiate that higher the acidic tends to better the wine.
-
-### Plot Four : Ideal vs poor wine 
+### Plot Three : Ideal vs poor wine 
 
 ```{r } 
 ggplot(data = subset(rw, rating != 'good'), aes(alcohol, sulphates, color = rating)) +
@@ -411,7 +385,7 @@ ggplot(data = subset(rw, rating != 'good'), aes(alcohol, sulphates, color = rati
   ylab('Alcohol (% volume)')
 ```
 
-### Description Four
+### Description Three
 It would be great to see the real pattern between good and bad wines. Above plot differentiate between good and bad wines. It shows higher the % of alcohol and higher the sulphates give better wines. 
 
 ------
