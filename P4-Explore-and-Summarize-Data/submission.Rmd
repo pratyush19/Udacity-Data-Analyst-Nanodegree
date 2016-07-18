@@ -183,11 +183,10 @@ As our main objective is to conclude ```quality```. So, it's the main feature.
 
 ```{r }
 quality_plot <- function(x, y, ylab) {
-  return (ggplot(data = rw, aes(x, y)) +
+  return (ggplot(data = rw, aes(as.factor(x), y)) +
            geom_boxplot(fill = 'green') +
             xlab('quality') +
-            ylab(ylab) + 
-            facet_wrap(~quality))
+            ylab(ylab))
 }
 
 grid.arrange(quality_plot(rw$quality, rw$fixed.acidity, 'fixed.acidity (g / dm^3)'),
@@ -205,6 +204,7 @@ grid.arrange(quality_plot(rw$quality, rw$fixed.acidity, 'fixed.acidity (g / dm^3
              quality_plot(rw$quality, rw$pH, 'pH'),
              quality_plot(rw$quality, rw$sulphates, 'sulphates (g / dm^3)'),
              quality_plot(rw$quality, rw$alcohol, 'alcohol (% volume)'),
+             quality_plot(rw$quality, rw$total.acidity, 'alcohol (% volume)'),
              ncol = 4)
 ```
 
@@ -232,7 +232,56 @@ grid.arrange(rating_plot(rw$rating, rw$fixed.acidity, 'fixed.acidity (g / dm^3)'
              rating_plot(rw$rating, rw$pH, 'pH'),
              rating_plot(rw$rating, rw$sulphates, 'sulphates (g / dm^3)'),
              rating_plot(rw$rating, rw$alcohol, 'alcohol (% volume)'),
+             rating_plot(rw$rating, rw$total.acidity, 'alcohol (% volume)'),
              ncol = 4)
+```
+
+### Mean of variables for *ideal* rating
+
+```{r}
+mean <- c(mean(subset(rw, rating == 'ideal')$fixed.acidity),
+          mean(subset(rw, rating == 'ideal')$volatile.acidity),
+          mean(subset(rw, rating == 'ideal')$citric.acid),
+          mean(subset(rw, rating == 'ideal')$residual.sugar),
+          mean(subset(rw, rating == 'ideal')$chlorides),
+          mean(subset(rw, rating == 'ideal')$free.sulfur.dioxide),
+          mean(subset(rw, rating == 'ideal')$total.sulfur.dioxide),
+          mean(subset(rw, rating == 'ideal')$density),
+          mean(subset(rw, rating == 'ideal')$pH),
+          mean(subset(rw, rating == 'ideal')$sulphates),
+          mean(subset(rw, rating == 'ideal')$alcohol),
+          mean(subset(rw, rating == 'ideal')$total.acidity))
+
+names(mean) <- c('fixed.acidity', 'volatile.acidity', 'citric.acid',
+                         'residual.sugar', 'chlorides', 'free.sulfur.dioxide',
+                         'total.sulfur.dioxide', 'density', 'pH',
+                         'sulphates', 'alcohol', 'total.acidity')
+
+mean
+```
+
+### Median of variables for *ideal* rating
+
+```{r}
+median <- c(median(subset(rw, rating == 'ideal')$fixed.acidity),
+          median(subset(rw, rating == 'ideal')$volatile.acidity),
+          median(subset(rw, rating == 'ideal')$citric.acid),
+          median(subset(rw, rating == 'ideal')$residual.sugar),
+          median(subset(rw, rating == 'ideal')$chlorides),
+          median(subset(rw, rating == 'ideal')$free.sulfur.dioxide),
+          median(subset(rw, rating == 'ideal')$total.sulfur.dioxide),
+          median(subset(rw, rating == 'ideal')$density),
+          median(subset(rw, rating == 'ideal')$pH),
+          median(subset(rw, rating == 'ideal')$sulphates),
+          median(subset(rw, rating == 'ideal')$alcohol),
+          median(subset(rw, rating == 'ideal')$total.acidity))
+
+names(median) <- c('fixed.acidity', 'volatile.acidity', 'citric.acid',
+                         'residual.sugar', 'chlorides', 'free.sulfur.dioxide',
+                         'total.sulfur.dioxide', 'density', 'pH',
+                         'sulphates', 'alcohol', 'total.acidity')
+
+median
 ```
 
 # Bivariate Analysis
@@ -391,6 +440,7 @@ It would be great to see the real pattern between good and bad wines. Above plot
 ------
 
 # Reflection
-After this EDA, I can conclude that the major factors for better wine quality is alcohol, acidity and sulphates. These features must be in required content otherwise negative impact will effect the wine quality. Also, we can't be totally sure about quality index also it has been taken some experts. We've also concluded that there is linear relationship between pH and quality with negative slope.
+So, there are lots of features on which the wine quality is depend. We do a lot to find the relationship between every variables in the dataset, try to get some linear relation using geom_smooth().  
+And, after this EDA, I can conclude that the major factors for better wine quality is alcohol, acidity and sulphates. These features must also be in required content otherwise negative impact will effect the wine quality. Also, we can't be totally sure about quality index also it has been taken by some experts. We've also concluded that there is linear relationship between pH and quality with negative slope.
 
 One thing that is still unclear is the amount of ```residual.sugar```. It contains many outliers, also after doing some operation we get its common range from 1 to 4. But we can't find its amount for ideal wine quality. I think more future research need to be done to find its ideal quantity.
