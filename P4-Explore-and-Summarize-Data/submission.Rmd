@@ -35,7 +35,15 @@ summary(rw)
 As we are primarily interested in quality of the red wines, let's see some basic statistics about it
 ```{r }
 summary(rw$quality)
+
+ggplot(data = rw, aes(as.factor(quality), fill = quality)) +
+  geom_bar() +
+  theme_replace() +
+  xlab("Quality") 
+  
 ```
+
+
 * We've found that the quality lies in the range of [3, 8] with mean is equal to 5.636.
 
 # Univariate Plots Section
@@ -72,12 +80,22 @@ rw$rating <- ifelse(rw$quality < 5, 'poor', ifelse(
 rw$rating <- ordered(rw$rating, levels = c('poor', 'good', 'ideal'))
 summary(rw$rating)
 
-ggplot(data = rw, aes(x = rating)) +
-  geom_bar()
+ggplot(data = rw, aes(x = as.factor(rating), fill = rating)) +
+  geom_bar() +
+  theme_minimal() +
+  scale_fill_brewer(type = 'seq', palette = 2)
 ```
 
+Summary of the ```rating```:
+
+```{r}
+summary(rw$rating)
+```
+
+
+
 ### Calculate total acidity
-To calculate sum of all acids in the red wines, we create new variable ```total.acidity```. 
+To calculate sum of all acids in the red wines, we create a new variable called ```total.acidity```. 
 
 ```{r }
 rw$total.acidity <- rw$fixed.acidity + rw$volatile.acidity + rw$citric.acid
@@ -125,6 +143,7 @@ ggplot(data = rw, aes(x = alcohol)) +
   geom_histogram() + 
   scale_x_log10() +
   xlab('alcohol (% volume')
+
 ```
 
 Taking log_10, we can see that ```fixed.acidity```, ```volatile.acidity```, and ```sulphates``` are normally distributed, with some few outliers. 
@@ -150,6 +169,13 @@ ggplot(data = rw, aes(x = chlorides)) +
   scale_x_continuous(lim = c(0.04, quantile(rw$chlorides, 0.95))) +
   xlab('chlorides (g / dm^3)')
 ```
+
+Correlation between ```residual.sugar``` and ```chlorides``` :
+
+```{r}
+cor.test(rw$residual.sugar, rw$chlorides)
+```
+
 
 * After removing some extreme outliers, we see ```chlorides``` are now normally distributed
 * Since ```residual.sugar``` comes in wide range as, it' is's rare to find wines with less than 1 gm/liter and wines with greater than 45 gm/liter are considered sweet, so the range of 1 - 4 as we found in the plot are ok with some outliers.
@@ -399,11 +425,12 @@ I plot graph between four variables ```citric.acid```, ```fixed.acidity```, ```s
 
 ### Plot One : Effect of alcohol on wine quality
 ```{r , Plot_One}
-ggplot(data = rw, aes(quality, alcohol, fill = rating)) +
+ggplot(data = rw, aes(as.factor(quality), alcohol, fill = rating)) +
   geom_boxplot() +
   ggtitle('Alcohol Levels on Wine Quality') +
   xlab('Quality') +
-  ylab('Alcohol (% volume)')
+  ylab('Alcohol (% volume)') +
+  scale_fill_brewer(type = 'seq', palette = 1)
   
 ```
 
@@ -412,13 +439,22 @@ As alcohol is highly correlated with the quality, it is better to see its patter
 
 ### Plot Two : Effect of acids on wine quality
 ```{r , Plot_Two}
-grid.arrange(ggplot(data = rw, aes(quality, fixed.acidity, fill = rating)) +
-               geom_boxplot(),
-             ggplot(data = rw, aes(quality, volatile.acidity, fill = rating)) +
-               geom_boxplot(),
-             ggplot(data = rw, aes(quality, citric.acid, fill = rating)) +
-               geom_boxplot(),
-             ncol = 2)
+grid.arrange(ggplot(data = rw, aes(as.factor(quality), fixed.acidity, fill = rating)) +
+               geom_boxplot() +
+               xlab("Quality") +
+               ylab("Fixed Acidity (g / dm^3)") +
+              scale_fill_brewer(type = 'seq', palette = 1),
+             ggplot(data = rw, aes(as.factor(quality), volatile.acidity, fill = rating)) +
+               geom_boxplot() +
+               xlab("Quality") +
+               ylab("Volatile Acidity (g / dm^3)") +
+              scale_fill_brewer(type = 'seq', palette = 1),
+             ggplot(data = rw, aes(as.factor(quality), citric.acid, fill = rating)) +
+               geom_boxplot() +
+               xlab("Quality") +
+               ylab("Citric Acid (g / dm^3)") +
+              scale_fill_brewer(type = 'seq', palette = 1),
+             ncol = 1)
 ```
 
 ### Description Two
