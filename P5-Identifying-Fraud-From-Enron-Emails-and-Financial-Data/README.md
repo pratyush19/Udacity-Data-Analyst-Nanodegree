@@ -145,7 +145,7 @@ The use PCA worsen the performance of **Random Forest** and **Ada Boost**, so I 
 Out of all the algorithms, **Logistic Regression** gives overall best performance using evaluation matrices which is discussed below.
 
 
-##5. Evaluation Metrics
+##6. Evaluation Metrics
 
 I have used three evaluation matrices **Precision**, **Recall** and **F1-score**. Theses matrices are based on comparing the predicted values to actual ones.
 
