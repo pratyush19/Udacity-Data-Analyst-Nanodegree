@@ -26,11 +26,11 @@ Data after removal:
 
 ![](https://github.com/pratyush19/Udacity-Data-Analyst-Nanodegree/blob/master/P5-Identifying-Fraud-From-Enron-Emails-and-Financial-Data/image/enron_remove.jpeg) 
 
-##2. Features Selection
-Besides **21 features**, I have created **3 features** additionally by using existing features which I think should help to find more accurate results.
+##2. Features Selection and Scaling
+Besides **21 features**, I have created **2 features** additionally by using existing features which I think should help to find more accurate results. 
 
-* ```fraction_poi_communication```: fraction of emails related to POIs
-* ```total_wealth```: salary, bonus, total stock value, exercised stock options.
+* ```fraction_poi_communication```: fraction of emails related to POIs. This new feature helps to determine what proportion of messages are communicated between POIs compared to overall messages.
+* ```total_wealth```: salary, bonus, total stock value, exercised stock options. It helps to find the sum of all values which is related to person wealth.
 
 Using ```SelectKBest```, below are the top 10 features of the dataset:
 
@@ -47,10 +47,16 @@ Using ```SelectKBest```, below are the top 10 features of the dataset:
 | Total Payments				  	  | 8.772    |
 | Shared Receipt with POI       | 8.589    |
 
+As we see, our new feature **Total Wealth** is appeared in the top 10 best features, from which we conclude that it is used in every algorithm to determine its performance.
+
+**Features Scaling :** It is used to standardize the range of features in the data. Standardization of dataset is important for many machine learning algorithms otherwise, they might behave badly if individual features do not likely to the standard normally distributed data. In Scikit-learn, I used ```StandardScaler()``` function to standardize the features in the dataset.
+
 ##3. Parameters Tuning
 Tuning the parameters of an algorithm involves changing the algorithm input parameters to a set of range and measuring the performances of each combinations in order to determine the optimal input parameters. Parameters tuning greatly helps to improve the performance of any algorithm.
 
 For each algorithms, a number of operation applied at once using ```Pipeline``` function, where parameters tuning is done using ```GridSearchCV``` and ```StratifiedShuffleSplit```.
+
+**PCA** is used to transform input features into Principal Components (**PCs**), which is used as new features. First PCs are in directions that maximizes variance (minimizes information loss) of the data. It helps in dimensionality reduction, to find latent features, reduce noise and make algorithms to work better with fewer inputs. Maximum PCs in the data is equal to number of features. The final dimension of PCA is determined using ```n_components``` used in scikit-learn ```PCA()```
 
 Following parameters are used to tune an algorithm:
 
@@ -141,7 +147,7 @@ clf = Pipeline(steps=[
                                           algorithm='SAMME.R'))
     ])
 ```
-The use PCA worsen the performance of **Random Forest** and **Ada Boost**, so I discarded PCA for these algorithms in my final evaluation.
+The uses of PCA worsen the performance of **Random Forest** and **Ada Boost**, so I discarded PCA for these algorithms in my final evaluation.
 Out of all the algorithms, **Logistic Regression** gives overall best performance using evaluation matrices which is discussed below.
 
 
@@ -149,11 +155,17 @@ Out of all the algorithms, **Logistic Regression** gives overall best performanc
 
 I have used three evaluation matrices **Precision**, **Recall** and **F1-score**. Theses matrices are based on comparing the predicted values to actual ones.
 
-**Precision :** Out of all items that are truly positive, how many are correctly classified as positive. It is calculated as ```(True Positive)/(True Postive + False Positive)```
+* True Positive (TP) : Case is positive and predicted positive
+* True Negative (TN) : case is negative and predicted negative
+* False Positive (FP) : Case is negative but predicted positive
+* False Negative (FN) : Case is positive but predicted negative
 
-**Recall :** Out of all items are predicted as positive, how many are truly belong to positive case. It is calculated as ```(True Positive)/(True Postive + False Negative)```
 
-**F1-score :** It is a harmonic mean of recall and precision. It is calculated as ```(2*recall*precision)/(recall + precision)```
+**Precision :** Out of all items that are truly positive, how many are correctly classified as positive. It is calculated as ```(TP)/(TP + FP)```. In this case, a high precision means POIs identified by an algorithm tended to be correct. 
+
+**Recall :** Out of all items are predicted as positive, how many are truly belong to positive case. It is calculated as ```(TP)/(TP + FN)```. In this case, a high recall means if there are POIs in the datset, an algorithm has good chance to identify them.
+
+**F1-score :** It is a harmonic mean of recall and precision. It is calculated as ```(2*recall*precision)/(recall + precision)```. It reached its best value at 1 and worse value at 0.
 
 The precision, recall and f1-score for each algorithms are given below:
 
