@@ -1,0 +1,4 @@
+Cabin_class,Survived,Dead,Total,Survived_rate,Dead_rate
+First,136,80,216,0.63,0.37
+Second,87,97,184,0.47,0.53
+Third,119,372,491,0.24,0.76

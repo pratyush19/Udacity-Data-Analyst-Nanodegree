@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Titanic Data Visualization</title>
+    <style>
+        .axis line,
+        .axis path {
+            fill: none;
+            stroke: #000;
+            shape-rendering: crispEdges;
+            stroke-width: 2
+        }
+        body {
+            position: relative;
+            margin: auto 15%;
+        }
+        header {
+            margin-left: 235px;
+        }
+        .note {
+            width:900px;
+            margin-top: 10px;
+            margin-left: 70px;
+            margin-bottom: 60px;
+        }
+    </style>
+  </head>
+
+<body>
+
+  <script src="//d3js.org/d3.v3.min.js"></script>
+
+  <header>
+  <h1>Graphical Representation of Titanic Survival</h1>
+</header>
+
+
+	<div id="chart1"></div>
+      <div class="note">
+        <h3>The stacked chart shows the survival of passengers acording to their class.
+          It is clear from the graph that first class passengers have higher survival rate.<h3>
+      </div>
+
+
+	<div id="chart2"></div>
+      <div class="note">
+        <h3>The stacked chart shows the survival rate of passengers acording to the age group.
+          The childrens have higher survival rate belonging to the age group 0-15.<h3>
+      </div>
+
+
+	<div id="chart3"></div>
+      <div class="note">
+        <h3>The stacked bar chart shows the survival of passengers acording to the gender and class.
+          The females belonging to the first class have great survival rate while the males belong to the third class have
+          very lower survival rate.<h3>
+      </div>
+
+
+  <script>
+
+  var margin = {top: 20, right: 50, bottom: 50, left: 50},
+      width = 960 - margin.left - margin.right,
+      height = 500 - margin.top - margin.bottom;
+
+
+  var x = d3.scale.ordinal()
+      .rangeRoundBands([margin.left, width],0.5);
+
+  var y = d3.scale.linear()
+      .rangeRound([height,margin.top]);
+
+  var xAxis = d3.svg.axis()
+      .scale(x)
+      .orient("bottom");
+
+  var colorRange = d3.scale.ordinal()
+    .range(["#41ae76","#99d8c9"]);
+
+  var yAxis = d3.svg.axis()
+      .scale(y)
+      .orient("left");
+
+  var svg = d3.select("#chart1").append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+  d3.csv("survivability_by_cabin.csv", function(data) {
+      var status = ["Survived", "Dead"];
+
+      var count_layers = d3.layout.stack()(status.map(function(temp) {
+          return data.map(function(d) {
+              return {x : d.Cabin_class,
+                  y : +d[temp] };
+          });
+      }));
+
+      x.domain(count_layers[0].map(function(d) { return d.x; }));
+      y.domain([0, d3.max(count_layers[count_layers.length - 1], function(d) {
+          return d.y0 + d.y; })]).nice();
+
+      var layer= svg.selectAll(".layer")
+              .data(count_layers)
+              .enter()
+              .append("g")
+              .attr("class", "layer")
+              .style("fill", function(d, i) { return colorRange(i); });
+
+      var rect = layer.selectAll("rect")
+              .data(function(d) { return d;})
+              .enter()
+              .append("rect")
+              .attr("x", function(d) { return x(d.x); })
+              .attr("y", function(d) { return y(d.y + d.y0); })
+              .attr("height", function(d) { return y(d.y0) - y(d.y + d.y0); })
+              .attr("width", x.rangeBand())
+              .on("mouseover", function() { tooltip.style("display", null);})
+              .on("mousemove", function(d) {
+                  var xPosition = d3.mouse(this)[0] - 15;
+                  var yPosition = d3.mouse(this)[1] - 25;
+                  tooltip.attr("transform", "translate(" + xPosition + "," +
+                      yPosition + ")");
+                  tooltip.select("text").text("Count: "+d.y);})
+              .on("mouseout", function() { tooltip.style("display", "none");});
+
+
+      svg.append("g")
+              .attr("class", "axis axis--x")
+              .call(xAxis)
+              .attr("transform", "translate(0," + height + ")")
+              .append("text")
+              .attr("text-anchor","middle")
+              .attr("transform","translate("+(width/2)+","+margin.bottom+")")
+              .style("font-size",20)
+              .text("Cabin Class");
+
+
+      svg.append("g")
+              .attr("class", "axis axis--y")
+              .attr("transform","translate("+margin.left+","+0+")")
+              .call(yAxis)
+              .append("text")
+              .attr("text-anchor","end")
+              .attr("transform","translate("+(-margin.left)+","+(height/2-margin.bottom)+")rotate(-90)")
+              .style("font-size",20)
+              .text("Number of Passengers");
+
+      var tooltip = svg.append("g")
+              .attr("class", "tooltip")
+              .style("display", "none");
+
+      tooltip.append("rect")
+              .attr("width", 65)
+              .attr("height", 20)
+              .attr("fill", "white")
+              .style("opacity", 0.5);
+
+      tooltip.append("text")
+              .attr("x", 30)
+              .attr("dy", "1.2em")
+              .style("text-anchor", "middle")
+              .attr("font-size", "12px")
+              .attr("font-weight", "bold");
+
+      var h2 = svg.append("text")
+              .text("Titanic Survival by Class")
+              .attr("text-anchor","middle")
+              .attr("transform","translate("+(width+margin.left)/2+","+0+")")
+              .attr("class","header")
+              .attr("font-size",25);
+
+      var legend = svg.selectAll(".legend")
+              .data(colorRange.domain().slice().reverse())
+              .enter()
+              .append("g")
+              .attr("class", "legend")
+              .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+
+      legend.append("rect")
+              .attr("x", width - 18)
+              .attr("width", 18)
+              .attr("height", 18)
+              .style("fill", colorRange)
+
+
+      legend.append("text")
+              .attr("x", width - 20)
+              .attr("y", 9)
+              .attr("dy", ".35em")
+              .style("text-anchor", "end")
+              .text(function(d, i) { switch (i) {
+                  case 0: return "Dead";
+                  case 1: return "Survived"; }});
+  });
+
+
+
+  // Chart 2
+
+  var margin = {top: 20, right: 50, bottom: 50, left: 50},
+      width = 960 - margin.left - margin.right,
+      height = 500 - margin.top - margin.bottom;
+
+
+  var x = d3.scale.ordinal()
+      .rangeRoundBands([margin.left, width],0.5);
+
+  var y = d3.scale.linear()
+      .rangeRound([height,margin.top]);
+
+  var xAxis = d3.svg.axis()
+      .scale(x)
+      .orient("bottom");
+
+  var colorRange2 = d3.scale.ordinal()
+    .range(["#756bb1","#bcbddc"]);
+
+  var yAxis = d3.svg.axis()
+      .scale(y)
+      .orient("left");
+
+  var svg2 = d3.select("#chart2").append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+  d3.csv("survival_age_group.csv", function(data) {
+      var status = ["Survived_rate", "Dead_rate"];
+
+      var rate_layers = d3.layout.stack()(status.map(function(temp) {
+          return data.map(function(d) {
+              return {x : d.Age_group,
+                  y : +d[temp] };
+          });
+      }));
+
+      x.domain(rate_layers[0].map(function(d) { return d.x; }));
+      y.domain([0, 1]);
+
+      var layer= svg2.selectAll(".layer")
+              .data(rate_layers)
+              .enter()
+              .append("g")
+              .attr("class", "layer")
+              .style("fill", function(d, i) { return colorRange2(i); });
+
+      var rect = layer.selectAll("rect")
+              .data(function(d) { return d;})
+              .enter()
+              .append("rect")
+              .attr("x", function(d) { return x(d.x); })
+              .attr("y", function(d) { return y(d.y + d.y0); })
+              .attr("height", function(d) { return y(d.y0) - y(d.y + d.y0); })
+              .attr("width", x.rangeBand())
+              .on("mouseover", function() { tooltip.style("display", null);})
+              .on("mousemove", function(d) {
+                  var xPosition = d3.mouse(this)[0] - 15;
+                  var yPosition = d3.mouse(this)[1] - 25;
+                  tooltip.attr("transform", "translate(" + xPosition + "," +
+                      yPosition + ")");
+                  tooltip.select("text").text("Count: "+d.y);})
+              .on("mouseout", function() { tooltip.style("display", "none");});
+
+
+      svg2.append("g")
+              .attr("class", "axis axis--x")
+              .call(xAxis)
+              .attr("transform", "translate(0," + height + ")")
+              .append("text")
+              .attr("text-anchor","middle")
+              .attr("transform","translate("+(width/2)+","+margin.bottom+")")
+              .style("font-size",20)
+              .text("Age Group");
+
+
+      svg2.append("g")
+              .attr("class", "axis axis--y")
+              .attr("transform","translate("+margin.left+","+0+")")
+              .call(yAxis)
+              .append("text")
+              .attr("text-anchor","end")
+              .attr("transform","translate("+(-margin.left)+","+(height/2-margin.bottom)+")rotate(-90)")
+              .style("font-size",20)
+              .text("Ratio of Survival / Dead");
+
+      var tooltip = svg2.append("g")
+              .attr("class", "tooltip")
+              .style("display", "none");
+
+      tooltip.append("rect")
+              .attr("width", 65)
+              .attr("height", 20)
+              .attr("fill", "white")
+              .style("opacity", 0.5);
+
+      tooltip.append("text")
+              .attr("x", 30)
+              .attr("dy", "1.2em")
+              .style("text-anchor", "middle")
+              .attr("font-size", "12px")
+              .attr("font-weight", "bold");
+
+      var h2 = svg2.append("text")
+              .text("Titanic Survival Rate by Age Group")
+              .attr("text-anchor","middle")
+              .attr("transform","translate("+(width+margin.left)/2+","+0+")")
+              .attr("class","header")
+              .attr("font-size",25);
+
+      var legend = svg2.selectAll(".legend")
+              .data(colorRange2.domain().slice().reverse())
+              .enter()
+              .append("g")
+              .attr("class", "legend")
+              .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+
+      legend.append("rect")
+              .attr("x", width - 18)
+              .attr("width", 18)
+              .attr("height", 18)
+              .style("fill", colorRange2)
+
+
+      legend.append("text")
+              .attr("x", width - 20)
+              .attr("y", 9)
+              .attr("dy", ".35em")
+              .style("text-anchor", "end")
+              .text(function(d, i) { switch (i) {
+                  case 0: return "Dead";
+                  case 1: return "Survived"; }});
+  });
+
+
+
+  // Chart 3
+
+  var margin = {top: 50, right: 50, bottom: 50, left: 50},
+            width = 960 - margin.left - margin.right,
+            height = 500 - margin.top - margin.bottom;
+
+  var x = d3.scale.ordinal()
+          .rangeRoundBands([margin.left, width],0.65);
+
+  var y = d3.scale.linear()
+          .rangeRound([height,margin.top]);
+
+  var ColorRange3 = d3.scale.ordinal()
+          .range(["#636363", "#bdbdbd"]);
+
+  var ColorRange4 = d3.scale.ordinal()
+          .range(["#feb24c", "#ffeda0"]);
+
+  var legend_color = d3.scale.ordinal()
+          .range(["#636363", "#bdbdbd","#feb24c", "#ffeda0"]);
+
+  var xAxis = d3.svg.axis()
+          .scale(x)
+          .orient("bottom");
+
+  var yAxis = d3.svg.axis()
+          .scale(y)
+          .orient("left");
+
+
+  var svg3 = d3.select("#chart3").append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform", "translate("+margin.left+","+20+")");
+
+  d3.csv("male_female_survivability.csv", function(data) {
+      var male_status = ["Male_Survived", "Male_Dead"];
+      var female_status = ["Female_Survived", "Female_Dead"];
+      var layers = d3.layout.stack()(female_status.map(function(c) {
+          return data.map(function(d) {
+              return {
+                  x : d.Cabin_class,
+                  y : +d[c],
+                  status : c
+              };
+          });
+      }));
+      var layers2 = d3.layout.stack()(male_status.map(function(c) {
+          return data.map(function(d) {
+              return {
+                  x : d.Cabin_class,
+                  y : +d[c],
+                  status : c
+              };
+          });
+      }));
+
+      x.domain(layers[0].map(function(d) { return d.x; }));
+      y.domain([0, d3.max(layers2[layers2.length - 1], function(d) { return d.y0 + d.y; })]).nice();
+      var layer = svg3.selectAll(".layer")
+              .data(layers)
+              .enter()
+              .append("g")
+              .attr("class", "layer")
+              .style("fill", function(d, i) { return ColorRange3(i); });
+      var layer2 = svg3.selectAll(".layer2")
+              .data(layers2)
+              .enter()
+              .append("g")
+              .attr("class", "layer2")
+              .style("fill", function(d, i) { return ColorRange4(i); });
+      var rect =  layer.selectAll(".female_rect")
+              .data(function(d) { return d;})
+              .enter()
+              .append("rect")
+              .attr("class","female_rect")
+              .attr("x", function(d) { return (x(d.x)-x.rangeBand()/2);})
+              .attr("y", function(d) { return y(d.y + d.y0);})
+              .attr("height", function(d) { return y(d.y0) - y(d.y + d.y0);})
+              .attr("width", x.rangeBand())
+              .on("mouseover", function() { tooltip.style("display", null);})
+              .on("mousemove", function(d) {
+                  var xPosition = d3.mouse(this)[0] - 15;
+                  var yPosition = d3.mouse(this)[1] - 25;
+                  tooltip.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
+                  tooltip.select("text").text("Count: "+d.y);})
+              .on("mouseout", function() { tooltip.style("display", "none");})
+
+      var rect2 =  layer2.selectAll(".male_rect")
+              .data(function(d) { return d;})
+              .enter()
+              .append("rect")
+              .attr("class","male_rect")
+              .attr("x", function(d) { return x(d.x)+x.rangeBand()/2;})
+              .attr("y", function(d) { return y(d.y + d.y0);})
+              .attr("height", function(d) { return y(d.y0) - y(d.y + d.y0);})
+              .attr("width", x.rangeBand())
+              .on("mouseover", function() { tooltip.style("display", null);})
+              .on("mousemove", function(d) {
+                  var xPosition = d3.mouse(this)[0] - 15;
+                  var yPosition = d3.mouse(this)[1] - 25;
+                  tooltip.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
+                  tooltip.select("text").text("Count: "+d.y);})
+              .on("mouseout", function() { tooltip.style("display", "none");})
+
+      svg3.append("g")
+              .attr("class", "axis axis--x")
+              .attr("transform", "translate(0," + height + ")")
+              .call(xAxis)
+              .append("text")
+              .attr("text-anchor","middle")
+              .attr("transform","translate("+width/2+","+margin.bottom+")")
+              .style("font-size",20)
+              .text("Cabin Class");
+
+      svg3.append("g")
+              .attr("class", "axis axis--y")
+              .attr("transform","translate("+margin.left+","+0+")")
+              .call(yAxis)
+              .append("text")
+              .attr("text-anchor","end")
+              .attr("transform","translate("+(-margin.left)+","+(height/2-margin.bottom)+")rotate(-90)")
+              .style("font-size",20)
+              .text("Number of Passengers");
+
+      var h2 = svg3.append("text")
+              .text("Titanic Survival by Class and Gender")
+              .attr("text-anchor","middle")
+              .attr("transform","translate("+(width+margin.left)/2+","+0+")")
+              .attr("class","header")
+              .attr("font-size",25);
+
+      var legend = svg3.selectAll(".legend")
+              .data([0,1,2,3])
+              .enter()
+              .append("g")
+              .attr("class", "legend")
+              .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+      legend.append("rect")
+              .attr("x", width)
+              .attr("width", 25)
+              .attr("height", 18)
+              .style("fill", function(d, i) { return legend_color(i);});
+
+      legend.append("text")
+              .attr("x", width - 5)
+              .attr("y", 9)
+              .attr("dy", ".35em")
+              .style("text-anchor", "end")
+              .text(function(d, i) { switch (i) {
+                  case 0: return "Female: Survived";
+                  case 1: return "Female: Dead";
+                  case 2: return "Male: Survived";
+                  case 3: return "Male: Dead";}});
+
+      var tooltip = svg3.append("g")
+              .attr("class", "tooltip")
+              .style("display", "none");
+
+      tooltip.append("rect")
+              .attr("width", 65)
+              .attr("height", 20)
+              .attr("fill", "white")
+              .style("opacity", 0.5);
+
+      tooltip.append("text")
+              .attr("x", 30)
+              .attr("dy", "1.2em")
+              .style("text-anchor", "middle")
+              .attr("font-size", "12px")
+              .attr("font-weight", "bold");
+  });
+
+
+
+  </script>
+
+</body>
+
+</html>
