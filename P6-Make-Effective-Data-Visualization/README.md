@@ -5,7 +5,7 @@
 This project involves visualization of Titanic survival using passenegers data such as class, gender and age group. Created total three graphs:
 
 1. Titanic survival by class: First class passengers have the highest survival rate among all the different classes.
-2. Titanic survival by age group: The Children belonging to the age group 0-15 shows have the highest survival rate.
+2. Titanic survival by age group: The Children belonging to the age group 0-15 have the highest survival rate.
 3. Titanic survival by class and gender: The First class female have maximum survival rate and the third class male have minimum survival rate.
 
 ## Design
