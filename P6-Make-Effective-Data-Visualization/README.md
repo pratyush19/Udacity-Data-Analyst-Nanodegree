@@ -11,6 +11,9 @@ Color in the stacked bar chart can be improved. The color which are used are goo
 ### Reduce the width of bar chart
 Reduce the width of stack bar chart for the second graph (Titanic Survival Rate by Age Group) so that it can be more clearly represent the age group.
 
+### Final Visualization
+https://bl.ocks.org/pratyush19/3a119b1aeb707cfc396c7a95340771fe
+
 ### Resources
 
 * [mbostock](https://bl.ocks.org/mbostock)
