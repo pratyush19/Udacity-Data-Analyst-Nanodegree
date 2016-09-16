@@ -25,7 +25,7 @@ Reduce the width of stack bar chart for the second graph (Titanic survival rate 
 To display the likelihood of survival, it is best to use ratios of the survival, so change the count to ratio in the chart 1 and chart 3. It would be best to use 'perished' instead of 'dead' as this tense matches that of 'survived'.
 
 ### Final Visualization
-https://bl.ocks.org/pratyush19/3a119b1aeb707cfc396c7a95340771fe
+https://bl.ocks.org/pratyush19/raw/3a119b1aeb707cfc396c7a95340771fe/
 
 ### Resources
 
